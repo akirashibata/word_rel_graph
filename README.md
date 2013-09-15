@@ -1,30 +1,30 @@
 (English follows)
 
-$BF|K\8l$NC18l$N4X78@-$r%0%i%U(BDB$B$G%b%G%k2=$7$^$9(B ($BF|K\8l$G$J$/$F$bF0$/$O$:!K(B
+日本語の単語の関係性をグラフDBでモデル化します (日本語でなくても動くはず）
 
-$BJ8>O$N9=B$$rM}2r$9$k>e$G!"C18lF1;N$N4X78@-$rM}2r$9$k$3$H$OHs>o$K=EMW$G$9!#6qBNE*$K$O(B
- - $B4XO"8l!'F1$8%I%-%e%a%s%H$K=P8=$9$k;v$,B?$$C18l!!!JNc!'!V%*%j%s%T%C%/!W$H!VBl@n%/%j%9%F%k!W!K(B
- - $BGI@88l!'F1$8C18l$r4^$`GI@8E*$JC18l!!!JNc!'!V%0%i%U!W$H!V%0%i%U%G!<%?%Y!<%9!W!K(B
- - $BN`8l!';w$?$3$H$r0UL#$9$k$,JL$NC18l!!!JNc!'!V%7%s%W%k!W$H!V4JC1!W!K(B
+文章の構造を理解する上で、単語同士の関係性を理解することは非常に重要です。具体的には
+ - 関連語：同じドキュメントに出現する事が多い単語　（例：「オリンピック」と「滝川クリステル」）
+ - 派生語：同じ単語を含む派生的な単語　（例：「グラフ」と「グラフデータベース」）
+ - 類語：似たことを意味するが別の単語　（例：「シンプル」と「簡単」）
 
-$B$J$I$,9M$($i$l$^$9!#C18lF1;N$N4X78$,$o$+$k$H!"%5!<%A$d%l%3%a%s%G!<%7%g%s$KHs>o$KM-8z$G$9!#Nc$($P!"%Q%$%=%s$N$3$H$r5$$K$7$F$$$k?M$O(BDropBox$B$K$D$$$F$b5$$K$J$k$@$m$&!"$H$+!"BfIw$N$3$H$r5$$K$7$F$$$?$iN54,$N$3$H$b5$$K$J$k$@$m$&!"$H$+!#(B
+などが考えられます。単語同士の関係がわかると、サーチやレコメンデーションに非常に有効です。例えば、パイソンのことを気にしている人はDropBoxについても気になるだろう、とか、台風のことを気にしていたら竜巻のことも気になるだろう、とか。
 
-$B:#2s$O;d$,%K%e!<%95-;v$+$i<}=8$7$?=q$/5-;v$NC18l%j%9%H$rF~NO%G!<%?$H$7!"$=$3$+$iC18lF1;N$N4XO"@-$rCj=P$7!"%0%i%U%G!<%?%Y!<%9$KF~NO$9$k$3$H$G!"F|K\8l$r2D;k2=$7$F$_$?$$$H;W$$$^$9!#(B
+今回は私がニュース記事から収集した書く記事の単語リストを入力データとし、そこから単語同士の関連性を抽出し、グラフデータベースに入力することで、日本語を可視化してみたいと思います。
 
-$B6qBNE*$K$O(BNeo4J$B$H$$$&%0%i%U%G!<%?%Y!<%9$,7k9==<<B$7$F$$$k$h$&$J$N$G!"$3$l$N%Q%$%=%s(BAPI$B$r;H$$$?$$$H;W$$$^$9!#(B
- - $B;H$$J}$N%A%e!<%H%j%"%k$O$3$3!'(Bhttp://www.coolgarif.com/brain-food/getting-started-with-neo4j-part2
- - $B<c$7$/$O(BPy2Neo$B$H$$$&(BAPI$B$b$h$5$=$&$G$9!'(Bhttp://blog.safaribooksonline.com/2013/07/23/using-neo4j-from-python/
+具体的にはNeo4Jというグラフデータベースが結構充実しているようなので、これのパイソンAPIを使いたいと思います。
+ - 使い方のチュートリアルはここ：http://www.coolgarif.com/brain-food/getting-started-with-neo4j-part2
+ - 若しくはPy2NeoというAPIもよさそうです：http://blog.safaribooksonline.com/2013/07/23/using-neo4j-from-python/
 
-$B$^$?!"(BNeo4j$B$N4XO"%W%m%8%'%/%H$G!"2D;k2=$r%D!<%k$,$"$k$h$&$J$N$G!"$=$l$r;H$C$F%b%G%k$r8+$J$,$iC5:w$7$F$_$?$$$H;W$$$^$9(B
- - $BNc$($P$3$3$K$"$k%D!<%k$H$+!((Bhttp://www.neo4j.org/develop/visualize
+また、Neo4jの関連プロジェクトで、可視化をツールがあるようなので、それを使ってモデルを見ながら探索してみたいと思います
+ - 例えばここにあるツールとか；http://www.neo4j.org/develop/visualize
 
-$B:n6HJ,C4(B
- - $BF~NO%G!<%?$NFI$_9~$_(B
- - $BJ,@O$K$h$k4XO"@-$NCj=P(B
- - $B%G!<%?%Y!<%9$X$NF~NO(B
- - $B2D;k2=(B
+作業分担
+ - 入力データの読み込み
+ - 分析による関連性の抽出
+ - データベースへの入力
+ - 可視化
 
-$B3'$5$s$N;22C$*BT$A$7$F$$$^$9!*(B
+皆さんの参加お待ちしています！
 
 ====
 A graph DB modeling engine for Japanese words (or in fact should work with any language)
