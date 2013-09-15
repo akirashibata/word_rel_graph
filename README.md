@@ -1,3 +1,6 @@
+Visualizing Language
+================
+
 (English follows)
 
 日本語の単語の関係性をグラフDBでモデル化します (日本語でなくても動くはず）
@@ -24,7 +27,7 @@
  - データベースへの入力
  - 可視化
 
-皆さんの参加お待ちしています！
+インプットデータの例がnews.json（一行一ドキュメントのワードカウント）とdict.json（単語IDのルックアップ）にあります。実際のデータはかなり大きくなりますので、当日やりとりしましょう。皆さんの参加お待ちしています！
 
 ====
 A graph DB modeling engine for Japanese words (or in fact should work with any language)
@@ -51,4 +54,4 @@ Proposed work breakdown:
  - input into graph DB
  - visualization
 
-Looking forward to working with you!
+Example input data can be found in news.json (one line per document) and dict.json (lookup dictionary). Full data will be huge and it needs to be handed directly. Looking forward to working with you!
