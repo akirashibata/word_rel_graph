@@ -30,21 +30,24 @@ class RelModel(object):
     self.words_db=words_db
     self.graph_db=graph_db
     
-  def build(self):
+  def build(self, n=-1, con_db=True):
+    count=0
     for feature in self.feature_db.one_feature(): 
+      if n>0 and count>n: break
+      count +=1
       keys_processed=[]
       print feature
       for key, val in feature.items():
         if self.words_db.is_noun(key):
           #print 'calling appearance'
-          self.graph_db.appearance(key)
+          if con_db: self.graph_db.appearance(key)
           #print 'done calling appearance'
           keys_processed.append(key)
           for key2 in keys_processed:
             if not key2==key:
               pass
               #print 'calling co appearance'
-              self.graph_db.co_appearance(key, key2)       
+              if con_db: self.graph_db.co_appearance(key, key2)       
               #print 'done calling co appearance'
 
   def get(self, word_id=None, word=None):
@@ -149,22 +152,33 @@ class FeatureDB(object):
         f.write(json.dumps(data)+'\n')
  
 if __name__=='__main__':
-  start=datetime.datetime.now()
-  interval=datetime.timedelta(days=1)
-  start=start-interval
-  for i in range(1):
-    time_from=start-interval
-    print 'building model using data from', time_from, 'to', start
-    fdb=FeatureDB(time_from, start, alg_ver='BOW_TF')
-    start=time_from
+  def main():
+    start=datetime.datetime.now()
+    interval=datetime.timedelta(days=1)
+    start=start-interval
+    for i in range(1):
+      time_from=start-interval
+      print 'building model using data from', time_from, 'to', start
+      fdb=FeatureDB(time_from, start, alg_ver='BOW_TF')
+      start=time_from
 
-    wdb=WordsDB(10)
-    print wdb.one_word(10)
-    word='ペン'
-    print wdb.one_id(word)
+      wdb=WordsDB(10)
+      print wdb.one_word(10)
+      word='ペン'
+      print wdb.one_id(word)
 
-    gdb=GraphIO()
+      gdb=GraphIO()
 
-    model=RelModel(fdb, wdb, gdb)
-    model.build()
-    print model.get(word='ペン')
+      model=RelModel(fdb, wdb, gdb)
+      model.build(2, con_db=False)
+      #print model.get(word='ペン')
+
+  import cProfile as profile
+  import pstats
+  filename = 'profile_stats.stats'
+  profile.run('main()', filename)
+
+  stats = pstats.Stats('profile_stats.stats')
+  stats.strip_dirs()
+  stats.sort_stats('cumulative')
+  stats.print_stats()
