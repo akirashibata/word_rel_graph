@@ -33,10 +33,19 @@ class RelModel(object):
   def build(self):
     for feature in self.feature_db.one_feature(): 
       keys_processed=[]
+      print feature
       for key, val in feature.items():
-        self.graph_db.appearance(key)
-        for kay2 in keys_processed:
-          self.graph_db.co_appearance(key, key2)       
+        if self.words_db.is_noun(key):
+          #print 'calling appearance'
+          self.graph_db.appearance(key)
+          #print 'done calling appearance'
+          keys_processed.append(key)
+          for key2 in keys_processed:
+            if not key2==key:
+              pass
+              #print 'calling co appearance'
+              self.graph_db.co_appearance(key, key2)       
+              #print 'done calling co appearance'
 
   def get(self, word_id=None, word=None):
     if not word_id and not word: return None
@@ -46,19 +55,26 @@ class RelModel(object):
       word_ids=list(word_id)
     rels_norm={}
     for word_id in word_ids:
-      rels=self.graph_db.relationships(word_id)
-      try: norm=rels.pop(word_id)
-      except: 
-        print 'word not found in rels', word_id, rels
-        raise
-      for wid, val in rels.items():
-        rels_norm[self.words_db.one_word(wid)]=float(val)/norm
+      print 'checking', word_id
+      if self.words_db.is_noun(word_id):
+        rels=self.graph_db.relationships(word_id)
+        try: norm=rels.pop(word_id)
+        except: 
+          print 'word not found in rels', word_id, rels
+          raise
+        for wid, val in rels.items():
+          rels_norm[self.words_db.one_word(wid)]=float(val)/norm
+      else:
+        print 'only nouns'
+        return None
     return rels_norm
 
 class WordsDB(object):
   def __init__(self, down_to):
     self.n=down_to
     self.con, self.cursor=get_con_cursor()
+    self.noun=[]
+    self.nonoun=[]
 
   def _all_words(self):
     l= sql_select(self.cursor, 'DICT_IDF', ['word_id', 'word'],
@@ -67,6 +83,20 @@ class WordsDB(object):
     self.cursor.close()
     self.con.close()
     return l
+
+  def is_noun(self, word_id):
+    return True
+    if word_id in self.nonoun: return False
+    if word_id in self.noun: return True
+    l=sql_select(self.cursor, 'DICT_IDF', ['pos_1'],
+     conditions='word_id = %s',
+     cond_data=((word_id,)), verbose=True)
+    if l[0][0]=='名詞'.decode('utf-8'):
+      self.noun.append(word_id)
+      return True
+    else: 
+      self.nonoun.append(word_id)
+      return False
 
   def one_word(self, word_id):
     l= sql_select(self.cursor, 'DICT_IDF', [ 'word'],
@@ -121,6 +151,7 @@ class FeatureDB(object):
 if __name__=='__main__':
   start=datetime.datetime.now()
   interval=datetime.timedelta(days=1)
+  start=start-interval
   for i in range(1):
     time_from=start-interval
     print 'building model using data from', time_from, 'to', start
@@ -135,5 +166,5 @@ if __name__=='__main__':
     gdb=GraphIO()
 
     model=RelModel(fdb, wdb, gdb)
-    #model.build()
+    model.build()
     print model.get(word='ペン')
